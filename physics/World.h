@@ -46,7 +46,11 @@ namespace fiz
 					float y = random() * 5.0f + 1.0f;
 					float z = random() * 10.0f - 5.0f;
 
-					AABB* aabb = new AABB(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 0.5f));
+					float sx = random() * 0.5f + 0.5f;
+					float sy = random() * 0.5f + 0.5f;
+					float sz = random() * 0.5f + 0.5f;
+
+					AABB* aabb = new AABB(glm::vec3(-sx, -sy, -sz), glm::vec3(sx, sy, sz));
 					shapes.push_back((Shape*)aabb);
 					bodies.emplace_back(glm::vec3(x, y, z));
 					bodies[bodies.size() - 1].addShape((Shape*)aabb);
@@ -64,12 +68,15 @@ namespace fiz
 
 			for (unsigned int i = 0; i < bodies.size(); ++i)
 			{
-				//bodies[i].m_Vel += gravity * dt;
-				//bodies[i].m_Pos += bodies[i].m_Vel * dt;
+				bodies[i].m_Vel += gravity * dt;
+				bodies[i].m_Pos += bodies[i].m_Vel * dt;
 
-				if (bodies[i].m_Pos.y < 0.0f)
+				glm::vec3 lowest = bodies[i].shapes[0]->support(glm::vec3(0.0f, -1.0f, 0.0f));
+				lowest += bodies[i].m_Pos;
+
+				if (lowest.y < 0.0f)
 				{
-					bodies[i].m_Pos.y = 0.0f;
+					bodies[i].m_Pos.y = bodies[i].m_Pos.y - lowest.y;
 					bodies[i].m_Vel.y *= -res;
 				}
 				if (bodies[i].m_Pos.y > 30.0f)

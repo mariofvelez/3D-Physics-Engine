@@ -41,6 +41,11 @@ namespace fiz
 			return glm::distance(point, pos) <= rad;
 		}
 
+		glm::vec3 support(glm::vec3 axis)
+		{
+			return pos + axis * rad;
+		}
+
 		float computeVolume()
 		{
 			return (4.0f / 3.0f) * glm::pi<float>() * rad2 * rad;
@@ -65,6 +70,14 @@ namespace fiz
 			return point.x >= min.x && point.x <= max.x &&
 				   point.y >= min.y && point.y <= max.y &&
 				   point.z >= min.z && point.z <= max.z;
+		}
+
+		glm::vec3 support(glm::vec3 axis)
+		{
+			float x = axis.x < 0.0f ? min.x : max.x;
+			float y = axis.y < 0.0f ? min.y : max.y;
+			float z = axis.z < 0.0f ? min.z : max.z;
+			return glm::vec3(x, y, z);
 		}
 
 		float computeVolume()
