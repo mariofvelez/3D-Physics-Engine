@@ -198,7 +198,7 @@ private:
 
 	unsigned int textureFromFile(const std::string& filename, unsigned int texture_type = GL_TEXTURE_2D)
 	{
-		stbi_set_flip_vertically_on_load(false);
+		stbi_set_flip_vertically_on_load(true);
 
 		unsigned int textureID;
 		glGenTextures(1, &textureID);

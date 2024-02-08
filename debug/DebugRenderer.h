@@ -91,7 +91,20 @@ public:
 					break;
 				}
 				case fiz::AABB_TYPE:
+				{
+					glBindTexture(GL_TEXTURE_2D, models.aabb_texture);
+					glBindVertexArray(models.aabbVAO);
+
+					fiz::AABB* aabb = (fiz::AABB*)shape;
+					glm::vec3 center = (aabb->min + aabb->max) * 0.5f;
+					model = glm::translate(model, center);
+					glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+					glm::vec3 scale = aabb->max - aabb->min;
+					shader->setVec3("scale", scale.x, scale.y, scale.z);
+
+					glDrawArrays(GL_TRIANGLES, 0, 36);
 					break;
+				}
 				}
 			}
 		}

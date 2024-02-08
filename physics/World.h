@@ -29,14 +29,28 @@ namespace fiz
 
 			for (int i = 0; i < 100; ++i)
 			{
-				float r = random() * 0.5f + 0.5f;
-				float x = random() * 10.0f - 5.0f;
-				float y = random() * 5.0f + 1.0f;
-				float z = random() * 10.0f - 5.0f;
-				Sphere* sphere = new Sphere(glm::vec3(0.0f, 0.0f, 0.0f), r);
-				shapes.push_back((Shape*)sphere);
-				bodies.emplace_back(glm::vec3(x, y, z));
-				bodies[bodies.size() - 1].addShape((Shape*)sphere);
+				if (random() < 0.5f) // sphere
+				{
+					float r = random() * 0.5f + 0.5f;
+					float x = random() * 10.0f - 5.0f;
+					float y = random() * 5.0f + 1.0f;
+					float z = random() * 10.0f - 5.0f;
+					Sphere* sphere = new Sphere(glm::vec3(0.0f, 0.0f, 0.0f), r);
+					shapes.push_back((Shape*)sphere);
+					bodies.emplace_back(glm::vec3(x, y, z));
+					bodies[bodies.size() - 1].addShape((Shape*)sphere);
+				}
+				else
+				{
+					float x = random() * 10.0f - 5.0f;
+					float y = random() * 5.0f + 1.0f;
+					float z = random() * 10.0f - 5.0f;
+
+					AABB* aabb = new AABB(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 0.5f));
+					shapes.push_back((Shape*)aabb);
+					bodies.emplace_back(glm::vec3(x, y, z));
+					bodies[bodies.size() - 1].addShape((Shape*)aabb);
+				}
 			}
 		}
 		~World() {}
@@ -50,8 +64,8 @@ namespace fiz
 
 			for (unsigned int i = 0; i < bodies.size(); ++i)
 			{
-				bodies[i].m_Vel += gravity * dt;
-				bodies[i].m_Pos += bodies[i].m_Vel * dt;
+				//bodies[i].m_Vel += gravity * dt;
+				//bodies[i].m_Pos += bodies[i].m_Vel * dt;
 
 				if (bodies[i].m_Pos.y < 0.0f)
 				{
@@ -72,11 +86,11 @@ namespace fiz
 					for (unsigned int j = 0; j < i; ++j)
 					{
 						glm::vec3 normal = intersectionNormal(&bodies[i], &bodies[j]);
-						bodies[j].m_Pos += normal;
+						//bodies[j].m_Pos += normal;
 
 						if (normal != glm::vec3())
 						{
-							solveCollision(bodies[i].getMass(), bodies[j].getMass(), bodies[i].m_Vel, bodies[j].m_Vel, normal);
+							//solveCollision(bodies[i].getMass(), bodies[j].getMass(), bodies[i].m_Vel, bodies[j].m_Vel, normal);
 						}
 					}
 				}
