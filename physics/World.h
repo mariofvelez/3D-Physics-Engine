@@ -149,5 +149,41 @@ namespace fiz
 			v1 = (normal * v_1 * restitution) + (lat1 * l1_1 * fr) + (lat2 * l1_2 * fr);
 			v2 = (normal * v_1 * restitution) + (lat1 * l2_1 * fr) + (lat2 * l2_2 * fr);
 		}
+
+		bool gjk(Shape* a, Shape* b)
+		{
+			glm::vec3 A = support(a, b, glm::vec3(1.0f, 1.0f, 1.0f));
+
+			Simplex s;
+			s.addVertex(A);
+
+			glm::vec3 D = -A;
+
+			for (unsigned int i = 0; i < 32; ++i)
+			{
+				A = support(a, b, D);
+				if (glm::dot(A, D) < 0.0f)
+					return false;
+				s.addVertex(A);
+			}
+		}
+		glm::vec3 support(Shape* a, Shape* b, glm::vec3 axis)
+		{
+			return a->support(axis) - b->support(-axis);
+		}
+	};
+
+	struct Simplex
+	{
+		glm::vec3 vertices[4];
+		unsigned int length;
+
+		Simplex() : vertices(), length(0) {}
+
+		void addVertex(glm::vec3& vertex)
+		{
+			vertices[length] = vertex;
+			++length;
+		}
 	};
 }
