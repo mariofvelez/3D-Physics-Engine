@@ -101,5 +101,32 @@ namespace fiz
 		{
 			vertices[index] = vec;
 		}
+
+		bool intersects(glm::vec3 point)
+		{
+			return false;
+		}
+
+		glm::vec3 support(glm::vec3 axis)
+		{
+			float max_dot = glm::dot(vertices[0], axis);
+			glm::vec3 s = glm::vec3(0.0f, 0.0f, 0.0f);
+			s = vertices[0];
+			for (unsigned int i = 0; i < vertices.size(); ++i)
+			{
+				float dot = glm::dot(vertices[i], axis);
+				if (dot > max_dot)
+				{
+					max_dot = dot;
+					s = vertices[i];
+				}
+			}
+			return s;
+		}
+
+		float computeVolume()
+		{
+			return 0.0f;
+		}
 	};
 }
