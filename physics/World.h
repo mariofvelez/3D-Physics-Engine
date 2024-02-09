@@ -7,6 +7,22 @@
 
 namespace fiz
 {
+#define triple_cross(x, y) glm::cross(glm::cross(x, y), x)
+
+	struct Simplex
+	{
+		glm::vec3 vertices[4];
+		unsigned int length;
+
+		Simplex() : vertices(), length(0) {}
+
+		void addVertex(glm::vec3& vertex)
+		{
+			vertices[length] = vertex;
+			++length;
+		}
+	};
+
 	class World
 	{
 	public:
@@ -165,25 +181,104 @@ namespace fiz
 				if (glm::dot(A, D) < 0.0f)
 					return false;
 				s.addVertex(A);
+
+				if (doSimplex(s, D))
+					return true;
 			}
 		}
 		glm::vec3 support(Shape* a, Shape* b, glm::vec3 axis)
 		{
 			return a->support(axis) - b->support(-axis);
 		}
-	};
-
-	struct Simplex
-	{
-		glm::vec3 vertices[4];
-		unsigned int length;
-
-		Simplex() : vertices(), length(0) {}
-
-		void addVertex(glm::vec3& vertex)
+		bool doSimplex(Simplex& s, glm::vec3& d)
 		{
-			vertices[length] = vertex;
-			++length;
+			switch (s.length)
+			{
+			case 1:
+				return;
+			case 2:
+			{
+				glm::vec3 ab = s.vertices[1] - s.vertices[0];
+				glm::vec3 ao = -s.vertices[1];
+				if (glm::dot(ab, -s.vertices[1]) > 0.0f)
+					d = triple_cross(ab, ao);
+				else
+				{
+					d = ao;
+					s.vertices[0] = s.vertices[1];
+					s.length = 1;
+				}
+				return;
+			}
+			case 3:
+			{
+				glm::vec3 ab = s.vertices[2] - s.vertices[1];
+				glm::vec3 ac = s.vertices[2] - s.vertices[0];
+				glm::vec3 ao = -s.vertices[2];
+				glm::vec3 abc = glm::cross(ab, ac);
+				if (glm::dot(glm::cross(abc, ac), ao) > 0.0f)
+				{
+					if (glm::dot(ac, ao) > 0.0f) // edge AC was closest
+					{
+						s.vertices[1] = s.vertices[2];
+						s.length = 2;
+					}
+					else
+					{
+						if (glm::dot(ab, ao) > 0.0f) // edge AB was closest
+						{
+							s.vertices[0] = s.vertices[1]; // [C, B, A] -> [B, A]
+							s.vertices[1] = s.vertices[2];
+							s.length = 2;
+							d = triple_cross(ab, ao);
+						}
+						else
+						{
+							s.vertices[0] = s.vertices[2];
+							s.length = 1;
+							d = ao;
+						}
+					}
+				}
+				else
+				{
+					if (glm::dot(glm::cross(ab, abc), ao) > 0.0f)
+					{
+						if (glm::dot(ab, ao) > 0.0f) // edge AB was closest
+						{
+							s.vertices[0] = s.vertices[1]; // [C, B, A] -> [B, A]
+							s.vertices[1] = s.vertices[2];
+							s.length = 2;
+							d = triple_cross(ab, ao);
+						}
+						else
+						{
+							s.vertices[0] = s.vertices[2];
+							s.length = 1;
+							d = ao;
+						}
+					}
+					else
+					{
+						if (glm::dot(abc, ao) > 0.0f)
+						{
+							d = abc;
+						}
+						else
+						{
+							glm::vec3 temp = s.vertices[1];
+							s.vertices[1] = s.vertices[2];
+							s.vertices[2] = temp;
+							d = -abc;
+						}
+					}
+				}
+			}
+			case 4:
+			{
+
+			}
+			}
 		}
 	};
 }
