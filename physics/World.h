@@ -195,20 +195,13 @@ namespace fiz
 			switch (s.length)
 			{
 			case 1:
-				return;
+				return false;
 			case 2:
 			{
 				glm::vec3 ab = s.vertices[1] - s.vertices[0];
 				glm::vec3 ao = -s.vertices[1];
-				if (glm::dot(ab, -s.vertices[1]) > 0.0f)
-					d = triple_cross(ab, ao);
-				else
-				{
-					d = ao;
-					s.vertices[0] = s.vertices[1];
-					s.length = 1;
-				}
-				return;
+				d = triple_cross(ab, ao);
+				return false;
 			}
 			case 3:
 			{
@@ -222,6 +215,7 @@ namespace fiz
 					{
 						s.vertices[1] = s.vertices[2];
 						s.length = 2;
+						d = triple_cross(ac, ao);
 					}
 					else
 					{
@@ -273,10 +267,11 @@ namespace fiz
 						}
 					}
 				}
+				return false;
 			}
 			case 4:
 			{
-
+				// regions: ABCD, ABC, ACD, ADB, AB, AC, AD
 			}
 			}
 		}
