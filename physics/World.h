@@ -272,6 +272,12 @@ namespace fiz
 			case 4:
 			{
 				// regions: ABCD, ABC, ACD, ADB, AB, AC, AD
+				glm::vec3 ao = -s.vertices[3];
+				glm::vec3 bo = -s.vertices[2];
+				glm::vec3 co = -s.vertices[1];
+				glm::vec3 d_o = -s.vertices[0];
+
+				
 			}
 			}
 		}
